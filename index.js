@@ -2,6 +2,12 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 const mongoose = require('mongoose');
 
+// mkdir express_upload
+// cd express_upload
+// npm init -y
+// npm install mongoose
+// npm install express
+
 mongoose.connect('mongodb://localhost:27017/user', {
     useUnifiedTopology: true,
     useNewUrlParser: true
@@ -63,16 +69,22 @@ app.post('/upload', upload.single('image'), (req,res) => {
     console.log('POST /upload req.file', req.file);
     console.log('POST /upload req.body', req.body);
     console.log('form parameter', req.body.username); 
-    const { userSchema } = req.body;
+
+    const { username } = req.body;
+    const  profilPicture  = req.file.path;
 
     // res.send(`Image ${req.body.username} has been uploaded <a href="/">Go Back</a>`);
 
-    // users.push(userSchema);
+    // users.push(username);
+
    const newUser = new Users({
-    username: req.body.username,
+    // username: req.body.username,
     firstName: req.body.firstName,
     surname: req.body.surname,
-    profilPicture: req.body.profilPicture,
+    // profilPicture: req.file.path,
+    username, //use this if u put = const { username } = req.body;
+    profilPicture,
+   
    })
 newUser.save((err,userDb) => {
     console.log('err', err)
@@ -84,6 +96,8 @@ newUser.save((err,userDb) => {
         return;
     }
     res.send(`File has been saved! <a href="/">Go Back</a>`)
+
+    mongoose.connection.close();
    });
 });
 
